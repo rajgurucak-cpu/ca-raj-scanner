@@ -1,0 +1,2505 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CA RAJ — Scanner Terminal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,400&family=Geist:wght@300..700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-0: #0a0610;
+        --bg-1: #110a1c;
+        --bg-2: #1a0f2b;
+        --bg-card: #15091f;
+        --line: #2a1a3d;
+        --line-soft: #1f1230;
+        --purple: #a855f7;
+        --purple-deep: #7c3aed;
+        --purple-glow: #c084fc;
+        --purple-dim: #4a1d6e;
+        --gold: #fbbf24;
+        --bull: #10d97e;
+        --bear: #ff4d6d;
+        --text-0: #f3eaff;
+        --text-1: #c8b8de;
+        --text-2: #8e7eaa;
+        --text-3: #5e4f7a;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Geist", system-ui, sans-serif;
+        background: var(--bg-0);
+        color: var(--text-0);
+        overflow-x: hidden;
+        min-height: 100vh;
+        background-image:
+          radial-gradient(
+            ellipse 800px 500px at 15% 0%,
+            rgba(168, 85, 247, 0.12),
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 600px 400px at 85% 10%,
+            rgba(124, 58, 237, 0.08),
+            transparent 60%
+          );
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.035;
+        z-index: 1;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+      .hidden {
+        display: none !important;
+      }
+      .login-shell {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        position: relative;
+        z-index: 2;
+      }
+      .login-card {
+        width: 100%;
+        max-width: 420px;
+        background: var(--bg-1);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 40px 32px;
+        position: relative;
+        overflow: hidden;
+      }
+      .login-card::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: 18px;
+        background: linear-gradient(
+          135deg,
+          var(--purple) 0%,
+          transparent 50%,
+          var(--purple-deep) 100%
+        );
+        z-index: -1;
+        opacity: 0.4;
+        filter: blur(20px);
+      }
+      .login-brand {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+      .login-logo {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--purple), var(--purple-deep));
+        display: grid;
+        place-items: center;
+        font-family: "Fraunces", serif;
+        font-weight: 700;
+        font-size: 32px;
+        color: white;
+        box-shadow: 0 0 40px rgba(168, 85, 247, 0.5);
+      }
+      .login-brand h1 {
+        font-family: "Fraunces", serif;
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+      .login-brand .tag {
+        color: var(--purple-glow);
+        font-size: 11px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        margin-top: 6px;
+        font-weight: 500;
+      }
+      .login-title {
+        font-family: "Fraunces", serif;
+        font-size: 22px;
+        margin-bottom: 6px;
+        letter-spacing: -0.01em;
+      }
+      .login-sub {
+        color: var(--text-2);
+        font-size: 13px;
+        margin-bottom: 28px;
+        line-height: 1.5;
+      }
+      .input-group {
+        margin-bottom: 16px;
+      }
+      .input-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--text-3);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        display: block;
+      }
+      .phone-input {
+        display: flex;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--bg-0);
+        overflow: hidden;
+        transition: border-color 0.15s;
+      }
+      .phone-input:focus-within {
+        border-color: var(--purple);
+      }
+      .phone-prefix {
+        padding: 14px;
+        background: var(--bg-2);
+        color: var(--text-1);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 14px;
+        border-right: 1px solid var(--line);
+      }
+      .phone-input input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text-0);
+        padding: 14px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 14px;
+        letter-spacing: 0.05em;
+      }
+      .otp-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .otp-grid input {
+        text-align: center;
+        background: var(--bg-0);
+        border: 1px solid var(--line);
+        color: var(--text-0);
+        padding: 14px 0;
+        border-radius: 8px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 18px;
+        font-weight: 600;
+        outline: none;
+        transition: all 0.15s;
+      }
+      .otp-grid input:focus {
+        border-color: var(--purple);
+        background: rgba(168, 85, 247, 0.08);
+      }
+      .btn-primary {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        background: linear-gradient(135deg, var(--purple), var(--purple-deep));
+        color: white;
+        font-family: "Geist", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-top: 8px;
+        transition: all 0.15s;
+        box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25);
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 28px rgba(168, 85, 247, 0.4);
+      }
+      .btn-ghost {
+        background: transparent;
+        border: 1px solid var(--line);
+        color: var(--text-1);
+        padding: 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 13px;
+        width: 100%;
+        margin-top: 10px;
+        transition: all 0.15s;
+      }
+      .btn-ghost:hover {
+        border-color: var(--purple-dim);
+        color: var(--text-0);
+      }
+      .otp-hint {
+        margin-top: 14px;
+        padding: 10px 12px;
+        background: rgba(168, 85, 247, 0.06);
+        border: 1px dashed var(--purple-dim);
+        border-radius: 8px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--purple-glow);
+        text-align: center;
+      }
+      .otp-resend {
+        text-align: center;
+        margin-top: 16px;
+        font-size: 12px;
+        color: var(--text-2);
+      }
+      .otp-resend a {
+        color: var(--purple-glow);
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .err-msg {
+        background: rgba(255, 77, 109, 0.1);
+        border: 1px solid rgba(255, 77, 109, 0.3);
+        color: var(--bear);
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        margin-bottom: 14px;
+      }
+      .login-footer {
+        text-align: center;
+        margin-top: 24px;
+        color: var(--text-3);
+        font-size: 11px;
+        line-height: 1.6;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(20px);
+        background: rgba(10, 6, 16, 0.78);
+        border-bottom: 1px solid var(--line);
+        padding: 14px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+      }
+      .brand-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 9px;
+        background: linear-gradient(135deg, var(--purple), var(--purple-deep));
+        display: grid;
+        place-items: center;
+        font-family: "Fraunces", serif;
+        font-weight: 700;
+        font-size: 20px;
+        color: white;
+        box-shadow: 0 0 24px rgba(168, 85, 247, 0.35);
+      }
+      .brand-text h1 {
+        font-family: "Fraunces", serif;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1;
+      }
+      .brand-text .tag {
+        font-size: 9px;
+        color: var(--purple-glow);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-weight: 500;
+        margin-top: 3px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 6px;
+      }
+      .nav-link {
+        padding: 8px 14px;
+        background: transparent;
+        border: 1px solid transparent;
+        color: var(--text-1);
+        font-family: "Geist", sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .nav-link:hover {
+        color: var(--text-0);
+        background: var(--bg-1);
+      }
+      .nav-link.active {
+        color: var(--purple-glow);
+        background: rgba(168, 85, 247, 0.08);
+        border-color: var(--purple-dim);
+      }
+      .market-status {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+      }
+      .status-pill {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 11px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(16, 217, 126, 0.06);
+      }
+      .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--bull);
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(16, 217, 126, 0.5);
+        }
+        70% {
+          box-shadow: 0 0 0 8px rgba(16, 217, 126, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(16, 217, 126, 0);
+        }
+      }
+      .status-pill.closed {
+        background: rgba(255, 77, 109, 0.06);
+      }
+      .status-pill.closed .status-dot {
+        background: var(--bear);
+        animation: none;
+      }
+      .clock {
+        color: var(--text-1);
+      }
+      .user-chip {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 6px 6px 12px;
+        background: var(--bg-1);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .user-chip:hover {
+        border-color: var(--purple);
+      }
+      .user-chip .name {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        color: var(--text-1);
+      }
+      .user-chip .badge {
+        font-size: 9px;
+        padding: 3px 8px;
+        background: var(--bg-2);
+        border-radius: 999px;
+        color: var(--text-2);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      .user-chip .badge.pro {
+        background: linear-gradient(135deg, var(--gold), #f59e0b);
+        color: #1a0f00;
+      }
+      .hero {
+        padding: 32px 28px 20px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .hero-tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--purple-glow);
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .hero-tag::before {
+        content: "";
+        width: 24px;
+        height: 1px;
+        background: var(--purple);
+      }
+      .hero-title {
+        font-family: "Fraunces", serif;
+        font-size: clamp(28px, 5vw, 48px);
+        font-weight: 400;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        margin-bottom: 6px;
+      }
+      .hero-title em {
+        font-style: italic;
+        color: var(--purple-glow);
+        font-weight: 300;
+      }
+      .hero-sub {
+        color: var(--text-2);
+        font-size: 14px;
+        max-width: 600px;
+        line-height: 1.5;
+      }
+      .stat-strip {
+        margin-top: 28px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1px;
+        background: var(--line-soft);
+        border: 1px solid var(--line-soft);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .stat-cell {
+        background: var(--bg-1);
+        padding: 16px 18px;
+      }
+      .stat-cell .label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--text-3);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .stat-cell .value {
+        font-family: "Fraunces", serif;
+        font-size: 28px;
+        font-weight: 400;
+        line-height: 1;
+        letter-spacing: -0.01em;
+      }
+      .stat-cell .delta {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        margin-top: 6px;
+      }
+      .delta.up {
+        color: var(--bull);
+      }
+      .delta.dn {
+        color: var(--bear);
+      }
+      .delta.neu {
+        color: var(--text-2);
+      }
+      .filter-bar {
+        padding: 20px 28px;
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        flex-wrap: wrap;
+        border-bottom: 1px solid var(--line-soft);
+        position: sticky;
+        top: 71px;
+        z-index: 50;
+        background: rgba(10, 6, 16, 0.85);
+        backdrop-filter: blur(20px);
+      }
+      .filter-pills {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .pill {
+        padding: 7px 13px;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--text-1);
+        border-radius: 999px;
+        font-family: "Geist", sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .pill:hover {
+        border-color: var(--purple-dim);
+        color: var(--text-0);
+      }
+      .pill.active {
+        background: var(--purple);
+        border-color: var(--purple);
+        color: white;
+        box-shadow: 0 0 18px rgba(168, 85, 247, 0.35);
+      }
+      .search-wrap {
+        position: relative;
+        margin-left: auto;
+        flex: 0 1 260px;
+      }
+      .search {
+        width: 100%;
+        background: var(--bg-1);
+        border: 1px solid var(--line);
+        color: var(--text-0);
+        padding: 9px 14px 9px 36px;
+        border-radius: 8px;
+        font-family: "Geist", sans-serif;
+        font-size: 13px;
+        outline: none;
+      }
+      .search:focus {
+        border-color: var(--purple);
+      }
+      .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-3);
+      }
+      .grid-wrap {
+        padding: 24px 28px 60px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 16px;
+      }
+      .scanner-card {
+        background: var(--bg-card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .scanner-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--purple),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .scanner-card:hover {
+        border-color: var(--purple-dim);
+        transform: translateY(-2px);
+        box-shadow: 0 16px 40px -12px rgba(168, 85, 247, 0.2);
+      }
+      .scanner-card:hover::before {
+        opacity: 1;
+      }
+      .scanner-card.live {
+        border-color: rgba(168, 85, 247, 0.4);
+        background:
+          linear-gradient(180deg, rgba(168, 85, 247, 0.04), transparent 60%),
+          var(--bg-card);
+      }
+      .scanner-card.locked {
+        border-color: rgba(251, 191, 36, 0.25);
+        background:
+          linear-gradient(180deg, rgba(251, 191, 36, 0.04), transparent 60%),
+          var(--bg-card);
+      }
+      .scanner-card.locked .blur-content {
+        filter: blur(6px);
+        opacity: 0.5;
+        pointer-events: none;
+        user-select: none;
+      }
+      .lock-overlay {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(
+          180deg,
+          transparent 30%,
+          rgba(10, 6, 16, 0.7) 70%
+        );
+        border-radius: 14px;
+        z-index: 2;
+      }
+      .lock-content {
+        text-align: center;
+        padding: 0 20px;
+      }
+      .lock-icon {
+        width: 44px;
+        height: 44px;
+        margin: 0 auto 12px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--gold), #f59e0b);
+        display: grid;
+        place-items: center;
+        color: #1a0f00;
+        box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+      }
+      .lock-content .lbl {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--gold);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+      .lock-content .upgrade {
+        font-family: "Fraunces", serif;
+        font-size: 15px;
+        color: var(--text-0);
+        margin-bottom: 12px;
+      }
+      .upgrade-btn {
+        background: linear-gradient(135deg, var(--gold), #f59e0b);
+        color: #1a0f00;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+        letter-spacing: 0.03em;
+        transition: transform 0.15s;
+      }
+      .upgrade-btn:hover {
+        transform: scale(1.04);
+      }
+      .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 14px;
+        gap: 12px;
+      }
+      .card-name {
+        font-family: "Fraunces", serif;
+        font-size: 17px;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+        line-height: 1.25;
+        flex: 1;
+      }
+      .badge-row {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .badge {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 9px;
+        padding: 3px 7px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        font-weight: 600;
+      }
+      .badge-live {
+        color: var(--bull);
+        background: rgba(16, 217, 126, 0.1);
+        border: 1px solid rgba(16, 217, 126, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .badge-live .dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--bull);
+        animation: pulse 2s infinite;
+      }
+      .badge-pro {
+        color: #1a0f00;
+        background: linear-gradient(135deg, var(--gold), #f59e0b);
+      }
+      .badge-free {
+        color: var(--text-2);
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+      }
+      .card-cat {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--text-3);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+      .card-cat .bias {
+        color: var(--purple-glow);
+        margin-left: 6px;
+      }
+      .card-cat .bias.bull {
+        color: var(--bull);
+      }
+      .card-cat .bias.bear {
+        color: var(--bear);
+      }
+      .card-desc {
+        color: var(--text-2);
+        font-size: 12px;
+        line-height: 1.5;
+        margin-bottom: 14px;
+        min-height: 36px;
+      }
+      .match-count {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin-bottom: 14px;
+      }
+      .match-count .num {
+        font-family: "Fraunces", serif;
+        font-size: 32px;
+        font-weight: 400;
+        line-height: 1;
+      }
+      .match-count .lbl {
+        font-size: 12px;
+        color: var(--text-2);
+      }
+      .ticker-list {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        border-top: 1px solid var(--line-soft);
+        padding-top: 12px;
+      }
+      .ticker-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+      }
+      .ticker-row .sym {
+        color: var(--text-0);
+        font-weight: 500;
+      }
+      .ticker-row .pct.up {
+        color: var(--bull);
+      }
+      .ticker-row .pct.dn {
+        color: var(--bear);
+      }
+      .card-foot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid var(--line-soft);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--text-3);
+      }
+      .view-all {
+        color: var(--purple-glow);
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+      }
+      .modal-bg {
+        position: fixed;
+        inset: 0;
+        background: rgba(5, 2, 10, 0.8);
+        backdrop-filter: blur(8px);
+        z-index: 200;
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 40px 20px;
+        overflow-y: auto;
+      }
+      .modal-bg.open {
+        display: flex;
+      }
+      .modal {
+        background: var(--bg-1);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        width: 100%;
+        max-width: 920px;
+        overflow: hidden;
+        animation: slideUp 0.3s ease;
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .modal-head {
+        padding: 24px 28px;
+        border-bottom: 1px solid var(--line-soft);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        background: linear-gradient(
+          180deg,
+          rgba(168, 85, 247, 0.06),
+          transparent
+        );
+      }
+      .modal-title {
+        font-family: "Fraunces", serif;
+        font-size: 24px;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+        margin-bottom: 6px;
+      }
+      .modal-meta {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        flex-wrap: wrap;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--text-2);
+      }
+      .close-btn {
+        background: transparent;
+        border: 1px solid var(--line);
+        color: var(--text-1);
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.15s;
+        flex-shrink: 0;
+      }
+      .close-btn:hover {
+        border-color: var(--bear);
+        color: var(--bear);
+      }
+      .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .results-table thead {
+        background: var(--bg-0);
+      }
+      .results-table th {
+        text-align: left;
+        padding: 12px 28px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--text-3);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        font-weight: 500;
+        border-bottom: 1px solid var(--line);
+      }
+      .results-table th.r,
+      .results-table td.r {
+        text-align: right;
+      }
+      .results-table tbody tr {
+        border-bottom: 1px solid var(--line-soft);
+        transition: background 0.15s;
+      }
+      .results-table tbody tr:hover {
+        background: rgba(168, 85, 247, 0.04);
+      }
+      .results-table td {
+        padding: 14px 28px;
+        font-family: "JetBrains Mono", monospace;
+        color: var(--text-1);
+      }
+      .results-table td.sym {
+        color: var(--text-0);
+        font-weight: 500;
+      }
+      .results-table td.up {
+        color: var(--bull);
+      }
+      .results-table td.dn {
+        color: var(--bear);
+      }
+      .tv-link {
+        color: var(--purple-glow);
+        text-decoration: none;
+        font-size: 11px;
+        border: 1px solid var(--purple-dim);
+        padding: 4px 9px;
+        border-radius: 5px;
+        transition: all 0.15s;
+      }
+      .tv-link:hover {
+        background: var(--purple);
+        border-color: var(--purple);
+        color: white;
+      }
+      .pricing-shell {
+        padding: 60px 28px 80px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .pricing-head {
+        text-align: center;
+        margin-bottom: 56px;
+      }
+      .pricing-head .tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--purple-glow);
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+      .pricing-head h2 {
+        font-family: "Fraunces", serif;
+        font-size: clamp(36px, 6vw, 56px);
+        font-weight: 400;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        margin-bottom: 16px;
+      }
+      .pricing-head h2 em {
+        font-style: italic;
+        color: var(--purple-glow);
+        font-weight: 300;
+      }
+      .pricing-head p {
+        color: var(--text-2);
+        font-size: 15px;
+        max-width: 560px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+      .plan-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .plan-card {
+        background: var(--bg-1);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 32px 28px;
+        position: relative;
+        transition: all 0.2s;
+      }
+      .plan-card:hover {
+        border-color: var(--purple-dim);
+        transform: translateY(-4px);
+      }
+      .plan-card.featured {
+        border-color: var(--purple);
+        background:
+          linear-gradient(180deg, rgba(168, 85, 247, 0.08), transparent 60%),
+          var(--bg-1);
+        box-shadow: 0 20px 60px -20px rgba(168, 85, 247, 0.4);
+      }
+      .plan-badge {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, var(--purple), var(--purple-deep));
+        color: white;
+        padding: 4px 14px;
+        border-radius: 999px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-weight: 600;
+        box-shadow: 0 4px 16px rgba(168, 85, 247, 0.4);
+      }
+      .plan-name {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--text-3);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+      .plan-price {
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+        margin-bottom: 6px;
+      }
+      .plan-price .cur {
+        font-family: "Fraunces", serif;
+        font-size: 22px;
+        color: var(--text-2);
+      }
+      .plan-price .num {
+        font-family: "Fraunces", serif;
+        font-size: 52px;
+        font-weight: 400;
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+      .plan-price .per {
+        font-size: 13px;
+        color: var(--text-2);
+        margin-left: 4px;
+      }
+      .plan-save {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--bull);
+        margin-bottom: 24px;
+        min-height: 16px;
+      }
+      .plan-feat {
+        list-style: none;
+        padding: 24px 0;
+        border-top: 1px solid var(--line-soft);
+        border-bottom: 1px solid var(--line-soft);
+        margin-bottom: 24px;
+      }
+      .plan-feat li {
+        padding: 6px 0;
+        font-size: 13px;
+        color: var(--text-1);
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .plan-feat li::before {
+        content: "✓";
+        color: var(--bull);
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .plan-feat li.dim {
+        color: var(--text-3);
+      }
+      .plan-feat li.dim::before {
+        content: "−";
+        color: var(--text-3);
+      }
+      .account-shell {
+        padding: 40px 28px 80px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .account-head {
+        margin-bottom: 32px;
+      }
+      .account-head h2 {
+        font-family: "Fraunces", serif;
+        font-size: 36px;
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        margin-bottom: 6px;
+      }
+      .account-head .sub {
+        color: var(--text-2);
+        font-size: 14px;
+      }
+      .account-card {
+        background: var(--bg-1);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 16px;
+      }
+      .account-card h3 {
+        font-family: "Fraunces", serif;
+        font-size: 18px;
+        margin-bottom: 16px;
+        font-weight: 500;
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line-soft);
+        font-size: 13px;
+        gap: 12px;
+      }
+      .info-row:last-child {
+        border-bottom: none;
+      }
+      .info-row .k {
+        color: var(--text-3);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .info-row .v {
+        color: var(--text-0);
+        font-family: "JetBrains Mono", monospace;
+        text-align: right;
+      }
+      .v.pro {
+        color: var(--gold);
+        font-weight: 600;
+      }
+      .v.free {
+        color: var(--text-2);
+      }
+      .demo-card {
+        border-color: var(--purple-dim);
+        background:
+          linear-gradient(180deg, rgba(168, 85, 247, 0.06), transparent 60%),
+          var(--bg-1);
+      }
+      .demo-card h3 {
+        color: var(--purple-glow);
+      }
+      .demo-toggle {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .demo-toggle button {
+        flex: 1;
+        min-width: 140px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        background: var(--bg-0);
+        color: var(--text-1);
+        border-radius: 8px;
+        font-family: "Geist", sans-serif;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .demo-toggle button:hover {
+        border-color: var(--purple);
+      }
+      .demo-toggle button.active {
+        background: linear-gradient(135deg, var(--purple), var(--purple-deep));
+        border-color: var(--purple);
+        color: white;
+      }
+      .logout-btn {
+        background: transparent;
+        border: 1px solid rgba(255, 77, 109, 0.3);
+        color: var(--bear);
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: all 0.15s;
+      }
+      .logout-btn:hover {
+        background: rgba(255, 77, 109, 0.08);
+        border-color: var(--bear);
+      }
+      footer {
+        border-top: 1px solid var(--line-soft);
+        padding: 32px 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        color: var(--text-3);
+        font-size: 12px;
+      }
+      footer .quote {
+        font-family: "Fraunces", serif;
+        font-style: italic;
+        color: var(--text-2);
+        font-size: 14px;
+      }
+      footer .quote span {
+        color: var(--purple-glow);
+      }
+      @media (max-width: 768px) {
+        .topbar {
+          padding: 12px 16px;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        .nav-links {
+          order: 3;
+          width: 100%;
+          justify-content: center;
+        }
+        .market-status {
+          font-size: 10px;
+          gap: 8px;
+        }
+        .user-chip .name {
+          display: none;
+        }
+        .hero {
+          padding: 24px 16px 16px;
+        }
+        .filter-bar {
+          padding: 14px 16px;
+          top: 130px;
+        }
+        .grid-wrap {
+          padding: 16px;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        .stat-strip {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .results-table th,
+        .results-table td {
+          padding: 10px 14px;
+          font-size: 11px;
+        }
+        .modal-head {
+          padding: 18px;
+        }
+        .search-wrap {
+          flex: 1 1 100%;
+        }
+        .pricing-shell {
+          padding: 40px 16px 60px;
+        }
+        .login-card {
+          padding: 32px 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- LOGIN VIEW -->
+    <div id="loginView" class="login-shell">
+      <div class="login-card">
+        <div class="login-brand">
+          <div class="login-logo">R</div>
+          <h1>CA RAJ</h1>
+          <div class="tag">Raj Never Quits</div>
+        </div>
+        <div id="phoneStep">
+          <div class="login-title">Sign in to continue</div>
+          <div class="login-sub">
+            Enter your mobile number — we'll send a 6-digit OTP for
+            verification.
+          </div>
+          <div id="phoneErr"></div>
+          <div class="input-group">
+            <label class="input-label">Mobile Number</label>
+            <div class="phone-input">
+              <span class="phone-prefix">+91</span>
+              <input
+                type="tel"
+                id="phoneInput"
+                maxlength="10"
+                placeholder="9876543210"
+                inputmode="numeric"
+              />
+            </div>
+          </div>
+          <button class="btn-primary" id="sendOtpBtn" onclick="sendOTP()">Send OTP →</button>
+          <div class="login-footer">
+            By continuing, you agree to our Terms & Privacy Policy<br />
+            Secure 6-digit OTP via SMS
+          </div>
+        </div>
+        <div id="otpStep" class="hidden">
+          <div class="login-title">Verify your number</div>
+          <div class="login-sub">
+            Enter the 6-digit code sent to
+            <span
+              id="phoneDisplay"
+              style="
+                color: var(--purple-glow);
+                font-family: &quot;JetBrains Mono&quot;, monospace;
+              "
+            ></span>
+          </div>
+          <div id="otpErr"></div>
+          <div class="otp-grid" id="otpGrid">
+            <input type="tel" maxlength="1" inputmode="numeric" />
+            <input type="tel" maxlength="1" inputmode="numeric" />
+            <input type="tel" maxlength="1" inputmode="numeric" />
+            <input type="tel" maxlength="1" inputmode="numeric" />
+            <input type="tel" maxlength="1" inputmode="numeric" />
+            <input type="tel" maxlength="1" inputmode="numeric" />
+          </div>
+          <div class="otp-hint" id="otpHint">
+            Enter the 6-digit code we sent
+          </div>
+          <button class="btn-primary" id="verifyOtpBtn" onclick="verifyOTP()">
+            Verify & Sign In
+          </button>
+          <button class="btn-ghost" onclick="backToPhone()">
+            ← Change number
+          </button>
+          <div class="otp-resend">
+            Didn't receive? <a onclick="resendOTP()">Resend OTP</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- APP VIEW -->
+    <div id="appView" class="hidden">
+      <header class="topbar">
+        <div class="brand" onclick="showView('dashboard')">
+          <div class="brand-logo">R</div>
+          <div class="brand-text">
+            <h1>CA RAJ</h1>
+            <div class="tag">Raj Never Quits</div>
+          </div>
+        </div>
+        <nav class="nav-links">
+          <button
+            class="nav-link"
+            data-view="dashboard"
+            onclick="showView('dashboard')"
+          >
+            Scanners
+          </button>
+          <button
+            class="nav-link"
+            data-view="pricing"
+            onclick="showView('pricing')"
+          >
+            Pricing
+          </button>
+          <button
+            class="nav-link"
+            data-view="telegram"
+            onclick="openTelegramModal()"
+          >
+            Telegram
+          </button>
+          <button
+            class="nav-link"
+            data-view="account"
+            onclick="showView('account')"
+          >
+            Account
+          </button>
+        </nav>
+        <div class="market-status">
+          <div class="status-pill" id="marketPill">
+            <div class="status-dot"></div>
+            <span id="marketState">NSE LIVE</span>
+          </div>
+          <div class="clock" id="clock">--:--:-- IST</div>
+        </div>
+        <div class="user-chip" onclick="showView('account')">
+          <span class="name" id="userPhone">+91 ••••••••••</span>
+          <span class="badge" id="userBadge">FREE</span>
+        </div>
+      </header>
+      <div id="dashboardView">
+        <section class="hero">
+          <div class="hero-tag">Live Scanner Terminal · NSE / BSE</div>
+          <h2 class="hero-title">
+            31 scanners.<br /><em>One pulse on the market.</em>
+          </h2>
+          <p class="hero-sub">
+            Real-time webhook results from your full Chartink scanner suite.
+            Branded "Khela Hobe" intraday calls, Stage 2 breakouts, F&O buildup
+            signals — surfaced the moment they trigger.
+          </p>
+          <div class="stat-strip">
+            <div class="stat-cell">
+              <div class="label">Active Scanners</div>
+              <div class="value">31</div>
+              <div class="delta neu">All operational</div>
+            </div>
+            <div class="stat-cell">
+              <div class="label">Free / Pro Split</div>
+              <div class="value">8 / 23</div>
+              <div class="delta neu">Unlock Pro for full access</div>
+            </div>
+            <div class="stat-cell">
+              <div class="label">Alerts Today</div>
+              <div class="value">347</div>
+              <div class="delta up">↑ 22% vs avg</div>
+            </div>
+            <div class="stat-cell">
+              <div class="label">Market Bias</div>
+              <div class="value" style="color: var(--bull); font-size: 22px">
+                BULLISH
+              </div>
+              <div class="delta up">71% bull scans firing</div>
+            </div>
+          </div>
+        </section>
+        <div class="filter-bar">
+          <div class="filter-pills" id="filterPills">
+            <button class="pill active" data-cat="all">All</button>
+            <button class="pill" data-cat="intraday">Intraday</button>
+            <button class="pill" data-cat="breakout">Breakout</button>
+            <button class="pill" data-cat="momentum">Momentum</button>
+            <button class="pill" data-cat="setup">Price Action</button>
+            <button class="pill" data-cat="reversal">Reversal</button>
+            <button class="pill" data-cat="fno">F&O</button>
+            <button class="pill" data-cat="volume">Volume</button>
+          </div>
+          <div class="search-wrap">
+            <svg
+              class="search-icon"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <input
+              class="search"
+              id="searchInput"
+              type="text"
+              placeholder="Search scanners…"
+            />
+          </div>
+        </div>
+        <main class="grid-wrap"><div class="grid" id="scannerGrid"></div></main>
+      </div>
+      <div id="pricingView" class="hidden">
+        <div class="pricing-shell">
+          <div class="pricing-head">
+            <div class="tag">Membership Plans</div>
+            <h2>Unlock the <em>full arsenal.</em></h2>
+            <p>
+              23 proprietary Pro scanners including Raja Khela Hobe, Homma Khela
+              Hobe, Ravi Sir's Hidden Pivot & DBBR series, and the full
+              atfinallynitin / HPA collection.
+            </p>
+          </div>
+          <div class="plan-grid">
+            <div class="plan-card">
+              <div class="plan-name">Monthly</div>
+              <div class="plan-price">
+                <span class="cur">₹</span><span class="num">999</span
+                ><span class="per">/mo</span>
+              </div>
+              <div class="plan-save"> </div>
+              <ul class="plan-feat">
+                <li>All 31 scanners unlocked</li>
+                <li>Live webhook alerts</li>
+                <li>Telegram notifications</li>
+                <li>Email support</li>
+                <li class="dim">Priority support</li>
+                <li class="dim">1-on-1 strategy call</li>
+              </ul>
+              <button class="btn-primary" onclick="subscribe('monthly')">
+                Choose Monthly
+              </button>
+            </div>
+            <div class="plan-card featured">
+              <div class="plan-badge">Most Popular</div>
+              <div class="plan-name">Yearly</div>
+              <div class="plan-price">
+                <span class="cur">₹</span><span class="num">4,999</span
+                ><span class="per">/yr</span>
+              </div>
+              <div class="plan-save">Save 58% — works out to ₹417/mo</div>
+              <ul class="plan-feat">
+                <li>All 31 scanners unlocked</li>
+                <li>Live webhook alerts</li>
+                <li>Telegram notifications</li>
+                <li>Priority support</li>
+                <li>1-on-1 strategy call</li>
+                <li>Early access to new scanners</li>
+              </ul>
+              <button class="btn-primary" onclick="subscribe('yearly')">
+                Choose Yearly
+              </button>
+            </div>
+            <div class="plan-card">
+              <div class="plan-name">Lifetime</div>
+              <div class="plan-price">
+                <span class="cur">₹</span><span class="num">24,999</span
+                ><span class="per">/once</span>
+              </div>
+              <div class="plan-save">One payment · forever access</div>
+              <ul class="plan-feat">
+                <li>All 31 scanners unlocked</li>
+                <li>Live webhook alerts</li>
+                <li>Telegram notifications</li>
+                <li>Priority support</li>
+                <li>1-on-1 strategy call</li>
+                <li>Early access to new scanners</li>
+              </ul>
+              <button
+                class="btn-primary"
+                onclick="subscribe('lifetime')"
+              >
+                Choose Lifetime
+              </button>
+            </div>
+          </div>
+          <div
+            style="
+              text-align: center;
+              margin-top: 40px;
+              color: var(--text-3);
+              font-size: 12px;
+            "
+          >
+            Secure payment via Razorpay · Cancel anytime · GST included<br />
+            Refund policy: 7-day money-back guarantee
+          </div>
+        </div>
+      </div>
+      <div id="accountView" class="hidden">
+        <div class="account-shell">
+          <div class="account-head">
+            <h2>Account</h2>
+            <div class="sub">Manage your profile and subscription</div>
+          </div>
+          <div class="account-card">
+            <h3>Profile</h3>
+            <div class="info-row">
+              <span class="k">Mobile</span
+              ><span class="v" id="acctPhone">—</span>
+            </div>
+            <div class="info-row">
+              <span class="k">Member Since</span
+              ><span class="v" id="acctSince">—</span>
+            </div>
+            <div class="info-row">
+              <span class="k">User ID</span
+              ><span class="v" id="acctId" style="font-size: 11px">—</span>
+            </div>
+          </div>
+          <div class="account-card">
+            <h3>Subscription</h3>
+            <div class="info-row">
+              <span class="k">Current Plan</span
+              ><span class="v" id="acctPlan">FREE</span>
+            </div>
+            <div class="info-row">
+              <span class="k">Status</span
+              ><span class="v" id="acctStatus">Active</span>
+            </div>
+            <div class="info-row">
+              <span class="k">Renewal Date</span
+              ><span class="v" id="acctRenewal">—</span>
+            </div>
+            <div class="info-row">
+              <span class="k">Scanners Unlocked</span
+              ><span class="v" id="acctScanners">8 of 31</span>
+            </div>
+            <button
+              class="btn-primary"
+              style="margin-top: 18px"
+              onclick="showView('pricing')"
+              id="acctUpgradeBtn"
+            >
+              Upgrade to Pro →
+            </button>
+          </div>
+          <div class="account-card demo-card">
+            <h3>🛠 Demo Controls</h3>
+            <div
+              style="font-size: 12px; color: var(--text-2); margin-bottom: 8px"
+            >
+              Switch your subscription state to test how Free vs Pro users see
+              the dashboard. In production, replace with real Razorpay flow.
+            </div>
+            <div class="demo-toggle">
+              <button id="demoFreeBtn" onclick="setSubscription(null)">
+                Set as FREE
+              </button>
+              <button
+                id="demoProBtn"
+                onclick="devActivatePro()"
+              >
+                Set as PRO
+              </button>
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 24px">
+            <button class="logout-btn" onclick="logout()">Log out</button>
+          </div>
+        </div>
+      </div>
+      <footer>
+        <div class="quote">
+          "Markets <span>reward</span> the prepared. The rest is noise."
+        </div>
+        <div>
+          © CA RAJ · Disclaimer: Educational use only · Not investment advice
+        </div>
+      </footer>
+    </div>
+    <div
+      class="modal-bg"
+      id="modal"
+      onclick="if (event.target === this) closeModal();"
+    >
+      <div class="modal" id="modalBody"></div>
+    </div>
+    <!-- TELEGRAM MODAL -->
+    <div
+      class="modal-bg"
+      id="telegramModal"
+      onclick="if (event.target === this) closeTelegramModal();"
+    >
+      <div class="modal" style="max-width: 520px">
+        <div class="modal-head">
+          <div>
+            <div class="modal-title">Telegram Notifications</div>
+            <div class="modal-meta">
+              <span>Instant alerts to your Telegram chat</span>
+            </div>
+          </div>
+          <button class="close-btn" onclick="closeTelegramModal()">×</button>
+        </div>
+        <div style="padding: 22px 28px">
+          <div class="input-group">
+            <label class="input-label">Bot Token</label>
+            <div class="phone-input">
+              <input
+                id="tgBotToken"
+                type="text"
+                placeholder="123456:ABC-DEF…"
+                style="
+                  flex: 1;
+                  background: transparent;
+                  border: none;
+                  outline: none;
+                  color: var(--text-0);
+                  padding: 14px;
+                  font-family: 'JetBrains Mono', monospace;
+                  font-size: 13px;
+                "
+              />
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Chat ID</label>
+            <div class="phone-input">
+              <input
+                id="tgChatId"
+                type="text"
+                placeholder="123456789 or @channelname"
+                style="
+                  flex: 1;
+                  background: transparent;
+                  border: none;
+                  outline: none;
+                  color: var(--text-0);
+                  padding: 14px;
+                  font-family: 'JetBrains Mono', monospace;
+                  font-size: 13px;
+                "
+              />
+            </div>
+          </div>
+          <div
+            style="
+              font-size: 11px;
+              color: var(--text-3);
+              line-height: 1.6;
+              margin-bottom: 16px;
+            "
+          >
+            Create a bot via <strong style="color: var(--text-1)">@BotFather</strong> to get a token. Get your chat ID from <strong style="color: var(--text-1)">@userinfobot</strong>.
+          </div>
+          <div id="tgStatus" style="font-size: 12px; margin-bottom: 12px"></div>
+          <div style="display: flex; gap: 10px">
+            <button class="btn-primary" style="flex: 1; margin: 0" onclick="saveTelegram()">Save</button>
+            <button class="btn-ghost" style="flex: 1; margin: 0" onclick="testTelegram()">Send test</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEV BANNER -->
+    <div
+      id="devBanner"
+      style="
+        display: none;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        z-index: 300;
+        background: var(--bg-1);
+        border: 1px solid var(--purple-dim);
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        color: var(--purple-glow);
+        max-width: 320px;
+      "
+    ></div>
+    <script>
+// =============================================================
+// CA RAJ Scanner Terminal — wired client (server-backed)
+// =============================================================
+
+const TOKEN_KEY = 'scanner_token';
+
+const state = {
+  token: localStorage.getItem(TOKEN_KEY) || null,
+  user: null,
+  subscription: null,
+  scanners: [],          // hydrated from /api/scanners
+  view: 'login',
+  filter: 'all',
+  search: '',
+  pendingPhone: null,
+  pendingDevOtp: null,
+  sse: null,
+  pollTimer: null,
+  alertsCache: {},       // scannerId -> { lastSeen: ts, list: [...] }
+};
+
+const isPro = () => !!(state.subscription && state.subscription.plan && state.subscription.status === 'active');
+
+// ---- API HELPERS ----
+async function api(path, opts = {}) {
+  const headers = { 'content-type': 'application/json', ...(opts.headers || {}) };
+  if (state.token) headers.authorization = 'Bearer ' + state.token;
+  const res = await fetch(path, { ...opts, headers });
+  let data = null;
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) {
+    const err = new Error((data && data.error) || res.statusText);
+    err.status = res.status; err.body = data;
+    throw err;
+  }
+  return data;
+}
+
+function devBanner(msg) {
+  const el = document.getElementById('devBanner');
+  if (!el) return;
+  if (!msg) { el.style.display = 'none'; return; }
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// ---- AUTH FLOW ----
+async function sendOTP() {
+  const input = document.getElementById('phoneInput');
+  const phone = input.value.trim();
+  const errBox = document.getElementById('phoneErr');
+  errBox.innerHTML = '';
+  if (!/^[6-9]\d{9}$/.test(phone)) {
+    errBox.innerHTML = '<div class="err-msg">Enter a valid 10-digit Indian mobile number</div>';
+    return;
+  }
+  const btn = document.getElementById('sendOtpBtn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const data = await api('/api/auth/send-otp', { method: 'POST', body: JSON.stringify({ phone }) });
+    state.pendingPhone = phone;
+    state.pendingDevOtp = data.devOtp || null;
+    document.getElementById('phoneStep').classList.add('hidden');
+    document.getElementById('otpStep').classList.remove('hidden');
+    document.getElementById('phoneDisplay').textContent = '+91 ' + phone;
+    const hint = document.getElementById('otpHint');
+    if (data.devMode && data.devOtp) {
+      hint.innerHTML = 'Dev mode &middot; OTP <strong>' + data.devOtp + '</strong> auto-filled';
+      // Auto-fill the grid
+      const inputs = document.querySelectorAll('#otpGrid input');
+      const code = String(data.devOtp);
+      inputs.forEach((inp, i) => { inp.value = code[i] || ''; });
+    } else {
+      hint.textContent = 'Enter the 6-digit code sent to your phone';
+    }
+    document.querySelector('#otpGrid input').focus();
+  } catch (err) {
+    errBox.innerHTML = '<div class="err-msg">' + escapeHtml(err.message || 'Failed to send OTP') + '</div>';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send OTP →';
+  }
+}
+
+async function verifyOTP() {
+  const inputs = document.querySelectorAll('#otpGrid input');
+  const code = Array.from(inputs).map(i => i.value).join('');
+  const errBox = document.getElementById('otpErr');
+  errBox.innerHTML = '';
+  if (!/^\d{6}$/.test(code)) {
+    errBox.innerHTML = '<div class="err-msg">Enter all 6 digits</div>';
+    return;
+  }
+  const btn = document.getElementById('verifyOtpBtn');
+  btn.disabled = true; btn.textContent = 'Verifying…';
+  try {
+    const data = await api('/api/auth/verify-otp', { method: 'POST', body: JSON.stringify({ phone: state.pendingPhone, code }) });
+    state.token = data.token;
+    state.user = data.user;
+    state.subscription = data.subscription || null;
+    localStorage.setItem(TOKEN_KEY, state.token);
+    await enterApp();
+  } catch (err) {
+    errBox.innerHTML = '<div class="err-msg">' + escapeHtml(err.message || 'Invalid OTP') + '</div>';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Verify & Sign In';
+  }
+}
+
+function backToPhone() {
+  document.getElementById('otpStep').classList.add('hidden');
+  document.getElementById('phoneStep').classList.remove('hidden');
+}
+
+async function resendOTP() {
+  const phone = state.pendingPhone;
+  if (!phone) return;
+  try {
+    const data = await api('/api/auth/send-otp', { method: 'POST', body: JSON.stringify({ phone }) });
+    if (data.devMode && data.devOtp) {
+      const inputs = document.querySelectorAll('#otpGrid input');
+      const code = String(data.devOtp);
+      inputs.forEach((inp, i) => { inp.value = code[i] || ''; });
+      document.getElementById('otpHint').innerHTML = 'Dev mode &middot; OTP <strong>' + data.devOtp + '</strong> auto-filled';
+    } else {
+      alert('OTP resent to +91 ' + phone);
+    }
+  } catch (err) {
+    alert(err.message || 'Failed to resend');
+  }
+}
+
+function logout() {
+  closeSSE();
+  if (state.pollTimer) clearInterval(state.pollTimer);
+  state.token = null; state.user = null; state.subscription = null; state.scanners = [];
+  localStorage.removeItem(TOKEN_KEY);
+  document.getElementById('appView').classList.add('hidden');
+  document.getElementById('loginView').classList.remove('hidden');
+  document.getElementById('phoneStep').classList.remove('hidden');
+  document.getElementById('otpStep').classList.add('hidden');
+  document.getElementById('phoneInput').value = '';
+  document.querySelectorAll('#otpGrid input').forEach(i => i.value = '');
+}
+
+// ---- ENTER APP ----
+async function enterApp() {
+  document.getElementById('loginView').classList.add('hidden');
+  document.getElementById('appView').classList.remove('hidden');
+  // Hydrate scanners and user.
+  await loadScanners();
+  await refreshMe();
+  showView('dashboard');
+  renderUserChip();
+  startSSE();
+}
+
+async function refreshMe() {
+  try {
+    const data = await api('/api/auth/me');
+    state.user = data.user;
+    state.subscription = data.subscription || null;
+    renderUserChip();
+    if (state.view === 'account') renderAccount();
+  } catch (err) {
+    if (err.status === 401) {
+      logout();
+    }
+  }
+}
+
+async function loadScanners() {
+  try {
+    const data = await api('/api/scanners');
+    state.scanners = data.scanners.map(s => ({ ...s, results: [] }));
+  } catch (err) {
+    console.error('loadScanners', err);
+  }
+}
+
+// ---- SUBSCRIPTION / BILLING ----
+async function subscribe(plan) {
+  try {
+    const order = await api('/api/billing/create-order', { method: 'POST', body: JSON.stringify({ plan }) });
+    if (order.devMode) {
+      // Dev mode — auto-activate.
+      devBanner('Dev mode — subscription auto-activated for testing.');
+      await api('/api/billing/dev-activate', { method: 'POST', body: JSON.stringify({ plan }) });
+      await refreshMe();
+      showView('dashboard');
+      setTimeout(() => devBanner(''), 5000);
+      return;
+    }
+    if (!window.Razorpay) {
+      await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+    }
+    const rzp = new window.Razorpay({
+      key: order.key_id,
+      amount: order.amount,
+      currency: order.currency || 'INR',
+      name: 'CA RAJ',
+      description: plan + ' subscription',
+      order_id: order.order_id,
+      handler: async function () {
+        // Success — webhook will activate. Poll /me a few times.
+        for (let i = 0; i < 6; i++) {
+          await refreshMe();
+          if (isPro()) break;
+          await new Promise(r => setTimeout(r, 1500));
+        }
+        showView('dashboard');
+      },
+      prefill: { contact: state.user && state.user.phone },
+      theme: { color: '#a855f7' },
+    });
+    rzp.open();
+  } catch (err) {
+    alert(err.message || 'Failed to start checkout');
+  }
+}
+
+async function devActivatePro() {
+  try {
+    await api('/api/billing/dev-activate', { method: 'POST', body: JSON.stringify({ plan: 'yearly' }) });
+    await refreshMe();
+    if (state.view === 'dashboard') renderGrid();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+
+// ---- VIEW ROUTING ----
+function showView(view) {
+  state.view = view;
+  ['dashboard', 'pricing', 'account'].forEach(v => {
+    const el = document.getElementById(v + 'View');
+    if (el) el.classList.toggle('hidden', v !== view);
+  });
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === view));
+  if (view === 'dashboard') renderGrid();
+  if (view === 'account') renderAccount();
+  // Handle ?scanner= deep link only on dashboard.
+  if (view !== 'dashboard') {
+    history.replaceState({}, '', location.pathname);
+  }
+  window.scrollTo(0, 0);
+}
+
+function renderUserChip() {
+  if (!state.user) return;
+  const phoneEl = document.getElementById('userPhone');
+  if (phoneEl) phoneEl.textContent = '+91 ' + state.user.phone.slice(0, 5) + ' ' + state.user.phone.slice(5);
+  const badge = document.getElementById('userBadge');
+  if (!badge) return;
+  if (isPro()) { badge.textContent = 'PRO'; badge.classList.add('pro'); }
+  else { badge.textContent = 'FREE'; badge.classList.remove('pro'); }
+}
+
+function renderAccount() {
+  if (!state.user) return;
+  document.getElementById('acctPhone').textContent = '+91 ' + state.user.phone;
+  document.getElementById('acctSince').textContent = new Date(state.user.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  document.getElementById('acctId').textContent = 'usr_' + String(state.user.id).padStart(6, '0');
+  const planEl = document.getElementById('acctPlan');
+  const renewalEl = document.getElementById('acctRenewal');
+  const scannersEl = document.getElementById('acctScanners');
+  const upgradeBtn = document.getElementById('acctUpgradeBtn');
+  if (isPro()) {
+    planEl.textContent = state.subscription.plan.toUpperCase() + ' PRO';
+    planEl.className = 'v pro';
+    renewalEl.textContent = state.subscription.expires_at ? new Date(state.subscription.expires_at).toLocaleDateString('en-IN') : 'Lifetime';
+    scannersEl.textContent = state.scanners.length + ' of ' + state.scanners.length + ' (All)';
+    upgradeBtn.style.display = 'none';
+  } else {
+    planEl.textContent = 'FREE';
+    planEl.className = 'v free';
+    renewalEl.textContent = '—';
+    const free = state.scanners.filter(s => s.tier === 'free').length;
+    scannersEl.textContent = free + ' of ' + state.scanners.length;
+    upgradeBtn.style.display = 'block';
+  }
+  const demoFree = document.getElementById('demoFreeBtn');
+  const demoPro = document.getElementById('demoProBtn');
+  if (demoFree) demoFree.classList.toggle('active', !isPro());
+  if (demoPro) demoPro.classList.toggle('active', isPro());
+}
+
+// ---- GRID ----
+const grid = document.getElementById('scannerGrid');
+
+function renderGrid() {
+  if (!grid) return;
+  grid.innerHTML = '';
+  const filtered = state.scanners.filter(s => {
+    const catOk = state.filter === 'all' || s.cat === state.filter;
+    const searchOk = !state.search || s.name.toLowerCase().includes(state.search.toLowerCase());
+    return catOk && searchOk;
+  });
+  if (!filtered.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px; color:var(--text-3); font-family:Fraunces, serif; font-size:18px;">No scanners match your filter.</div>';
+    return;
+  }
+  filtered.forEach((s, i) => {
+    const isLocked = s.tier === 'pro' && !isPro();
+    const card = document.createElement('div');
+    card.className = 'scanner-card' + (s.live ? ' live' : '') + (isLocked ? ' locked' : '');
+    card.dataset.scannerId = s.id;
+    card.style.animationDelay = (i * 25) + 'ms';
+    card.onclick = () => {
+      if (isLocked) showView('pricing');
+      else openScannerDetail(s.id);
+    };
+    const biasClass = s.bias === 'bull' ? 'bull' : 'bear';
+    const tierBadge = s.tier === 'pro' ? '<span class="badge badge-pro">PRO</span>' : '<span class="badge badge-free">FREE</span>';
+    const matchCount = s.matchCount || 0;
+    card.innerHTML = `
+      <div class="blur-content">
+        <div class="card-head">
+          <div class="card-name">${escapeHtml(s.name)}</div>
+          <div class="badge-row">
+            ${s.live ? '<span class="badge badge-live"><span class="dot"></span>LIVE</span>' : ''}
+            ${tierBadge}
+          </div>
+        </div>
+        <div class="card-cat">${escapeHtml(s.cat || '').toUpperCase()} <span class="bias ${biasClass}">· ${escapeHtml(s.bias || '').toUpperCase()}</span></div>
+        <div class="card-desc">${escapeHtml(s.descr || '')}</div>
+        <div class="match-count"><span class="num" data-match="${s.id}">${matchCount}</span><span class="lbl">alerts last 24h</span></div>
+        <div class="ticker-list" data-tickers="${s.id}"></div>
+        <div class="card-foot">
+          <span>${s.live ? 'Webhook · live' : 'Webhook · idle'}</span>
+          <span class="view-all">View all →</span>
+        </div>
+      </div>
+      ${isLocked ? `
+        <div class="lock-overlay">
+          <div class="lock-content">
+            <div class="lock-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div class="lbl">Pro Members Only</div>
+            <div class="upgrade">Unlock for ₹417/mo</div>
+            <button class="upgrade-btn" onclick="event.stopPropagation(); showView('pricing')">Upgrade to Pro →</button>
+          </div>
+        </div>
+      ` : ''}
+    `;
+    grid.appendChild(card);
+  });
+  // Hydrate top-3 tickers from cached alerts (if any).
+  filtered.forEach(s => hydrateTopTickers(s.id));
+}
+
+function hydrateTopTickers(scannerId) {
+  const wrap = document.querySelector('[data-tickers="' + scannerId + '"]');
+  if (!wrap) return;
+  const cache = state.alertsCache[scannerId];
+  const list = (cache && cache.list) ? cache.list.slice(0, 3) : [];
+  if (!list.length) {
+    wrap.innerHTML = '<div style="font-family:\'JetBrains Mono\',monospace; font-size:11px; color:var(--text-3); padding:6px 0;">No recent triggers</div>';
+    return;
+  }
+  wrap.innerHTML = list.map(a => `
+    <div class="ticker-row">
+      <span class="sym">${escapeHtml(a.symbol)}</span>
+      <span class="pct up">${a.trigger_price ? '₹' + Number(a.trigger_price).toFixed(2) : '—'}</span>
+    </div>
+  `).join('');
+}
+
+function bumpScannerMatch(scannerId, alert) {
+  const s = state.scanners.find(x => x.id === scannerId);
+  if (!s) return;
+  s.matchCount = (s.matchCount || 0) + 1;
+  // Update DOM if dashboard visible.
+  const numEl = document.querySelector('[data-match="' + scannerId + '"]');
+  if (numEl) numEl.textContent = s.matchCount;
+  const card = document.querySelector('.scanner-card[data-scanner-id="' + scannerId + '"]');
+  if (card) {
+    card.classList.add('flash');
+    setTimeout(() => card.classList.remove('flash'), 1200);
+  }
+  // Cache the alert in front.
+  if (!state.alertsCache[scannerId]) state.alertsCache[scannerId] = { lastSeen: 0, list: [] };
+  state.alertsCache[scannerId].list.unshift(alert);
+  state.alertsCache[scannerId].list = state.alertsCache[scannerId].list.slice(0, 50);
+  state.alertsCache[scannerId].lastSeen = alert.created_at || Date.now();
+  hydrateTopTickers(scannerId);
+}
+
+// ---- SCANNER DETAIL ----
+async function openScannerDetail(id) {
+  const s = state.scanners.find(x => x.id === id);
+  if (!s) return;
+  history.replaceState({}, '', '?scanner=' + encodeURIComponent(id));
+  // Render shell first.
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">${escapeHtml(s.name)}</div>
+        <div class="modal-meta">
+          <span>📊 ${escapeHtml((s.cat || '').toUpperCase())}</span>
+          <span>🎯 ${escapeHtml((s.bias || '').toUpperCase())}</span>
+          <span>${s.live ? '🟢 LIVE' : '⚪ DORMANT'}</span>
+          <span>Tier: <strong style="color:${s.tier === 'pro' ? 'var(--gold)' : 'var(--text-0)'}">${escapeHtml((s.tier || '').toUpperCase())}</strong></span>
+        </div>
+      </div>
+      <button class="close-btn" onclick="closeModal()">×</button>
+    </div>
+    <div style="padding: 18px 28px; color: var(--text-2); font-size: 13px; line-height: 1.6; border-bottom: 1px solid var(--line-soft);">
+      ${escapeHtml(s.descr || '')}
+    </div>
+    <div id="alertsBody" style="padding: 0">
+      <div style="padding: 24px 28px; color: var(--text-3); font-family:'JetBrains Mono',monospace; font-size:12px;">Loading alerts…</div>
+    </div>
+    <div style="padding: 18px 28px; border-top: 1px solid var(--line-soft); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <span style="font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-3);">Webhook: <span style="color: ${s.live ? 'var(--bull)' : 'var(--text-2)'};">${s.live ? '● Connected' : '○ Idle'}</span></span>
+      <a class="tv-link" href="${escapeAttr(s.url)}" target="_blank" rel="noopener" style="font-size:12px;">Open in Chartink ↗</a>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  // Fetch alerts.
+  try {
+    const data = await api('/api/scanners/' + encodeURIComponent(id) + '/alerts?limit=50');
+    renderAlertsTable(data.alerts || []);
+  } catch (err) {
+    document.getElementById('alertsBody').innerHTML = '<div style="padding:24px 28px; color:var(--bear); font-size:13px;">' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+function renderAlertsTable(alerts) {
+  const body = document.getElementById('alertsBody');
+  if (!body) return;
+  if (!alerts.length) {
+    body.innerHTML = '<div style="padding:32px 28px; text-align:center; color:var(--text-3); font-family:\'JetBrains Mono\',monospace; font-size:12px;">No alerts yet. Trigger the Chartink webhook to populate this list.</div>';
+    return;
+  }
+  body.innerHTML = `
+    <table class="results-table">
+      <thead><tr><th>Symbol</th><th class="r">Trigger ₹</th><th class="r">Triggered</th><th class="r">Chart</th></tr></thead>
+      <tbody>
+        ${alerts.map(a => `
+          <tr>
+            <td class="sym">${escapeHtml(a.symbol)}</td>
+            <td class="r">${a.trigger_price ? '₹' + Number(a.trigger_price).toFixed(2) : '—'}</td>
+            <td class="r" style="color:var(--text-2)">${formatRelative(a.created_at || a.triggered_at)}</td>
+            <td class="r"><a class="tv-link" href="https://in.tradingview.com/chart/?symbol=NSE:${encodeURIComponent(a.symbol)}" target="_blank" rel="noopener">TV ↗</a></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function formatRelative(ts) {
+  if (!ts) return '—';
+  const diff = Date.now() - Number(ts);
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + 'm ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'h ' + (m % 60) + 'm ago';
+  return new Date(ts).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+  history.replaceState({}, '', location.pathname);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeModal();
+    closeTelegramModal();
+  }
+});
+
+// ---- SSE + POLLING FALLBACK ----
+function startSSE() {
+  closeSSE();
+  if (!state.token) return;
+  try {
+    const es = new EventSource('/api/stream?token=' + encodeURIComponent(state.token));
+    state.sse = es;
+    es.addEventListener('hello', () => { /* connected */ });
+    es.addEventListener('alert', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        bumpScannerMatch(data.scanner_id, data);
+      } catch (err) {}
+    });
+    es.addEventListener('ping', () => {});
+    es.onerror = () => {
+      console.warn('SSE error → falling back to polling');
+      closeSSE();
+      startPolling();
+    };
+  } catch (err) {
+    startPolling();
+  }
+}
+
+function closeSSE() {
+  if (state.sse) { try { state.sse.close(); } catch (e) {} state.sse = null; }
+}
+
+function startPolling() {
+  if (state.pollTimer) clearInterval(state.pollTimer);
+  state.pollTimer = setInterval(async () => {
+    if (state.view !== 'dashboard') return;
+    const live = state.scanners.filter(s => s.live);
+    for (const s of live) {
+      const isLocked = s.tier === 'pro' && !isPro();
+      if (isLocked) continue;
+      try {
+        const since = (state.alertsCache[s.id] && state.alertsCache[s.id].lastSeen) || 0;
+        const data = await api('/api/scanners/' + encodeURIComponent(s.id) + '/alerts?since=' + since + '&limit=20');
+        if (data.alerts && data.alerts.length) {
+          // Newest last → reverse to chronological.
+          for (const a of [...data.alerts].reverse()) bumpScannerMatch(s.id, a);
+        }
+      } catch (err) { /* ignore */ }
+    }
+  }, 8000);
+}
+
+// ---- TELEGRAM MODAL ----
+async function openTelegramModal() {
+  document.getElementById('telegramModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('tgStatus').innerHTML = '';
+  document.getElementById('tgBotToken').value = '';
+  document.getElementById('tgChatId').value = '';
+  try {
+    const data = await api('/api/telegram/config');
+    if (data.config) {
+      if (data.config.has_token) document.getElementById('tgBotToken').placeholder = data.config.bot_token_masked || 'token saved';
+      if (data.config.chat_id) document.getElementById('tgChatId').value = data.config.chat_id;
+    }
+  } catch (err) {}
+}
+
+function closeTelegramModal() {
+  document.getElementById('telegramModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function saveTelegram() {
+  const bot_token = document.getElementById('tgBotToken').value.trim();
+  const chat_id = document.getElementById('tgChatId').value.trim();
+  const status = document.getElementById('tgStatus');
+  try {
+    await api('/api/telegram/config', { method: 'POST', body: JSON.stringify({ bot_token: bot_token || undefined, chat_id, enabled: true, scanner_filters: [] }) });
+    status.style.color = 'var(--bull)';
+    status.textContent = 'Saved.';
+  } catch (err) {
+    status.style.color = 'var(--bear)';
+    status.textContent = err.message;
+  }
+}
+
+async function testTelegram() {
+  const status = document.getElementById('tgStatus');
+  status.style.color = 'var(--text-2)';
+  status.textContent = 'Sending test…';
+  try {
+    // Save first if user typed values.
+    const bot_token = document.getElementById('tgBotToken').value.trim();
+    const chat_id = document.getElementById('tgChatId').value.trim();
+    if (bot_token || chat_id) {
+      await api('/api/telegram/config', { method: 'POST', body: JSON.stringify({ bot_token: bot_token || undefined, chat_id: chat_id || undefined, enabled: true, scanner_filters: [] }) });
+    }
+    await api('/api/telegram/test', { method: 'POST', body: '{}' });
+    status.style.color = 'var(--bull)';
+    status.textContent = '✅ Test sent. Check your Telegram.';
+  } catch (err) {
+    status.style.color = 'var(--bear)';
+    status.textContent = err.message;
+  }
+}
+
+// ---- FILTERS / SEARCH / CLOCK ----
+function bindFilters() {
+  document.getElementById('filterPills').addEventListener('click', e => {
+    const btn = e.target.closest('.pill');
+    if (!btn) return;
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    state.filter = btn.dataset.cat;
+    renderGrid();
+  });
+  document.getElementById('searchInput').addEventListener('input', e => {
+    state.search = e.target.value;
+    renderGrid();
+  });
+}
+
+function bindOTPInputs() {
+  document.querySelectorAll('#otpGrid input').forEach((inp, idx, arr) => {
+    inp.addEventListener('input', e => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 1);
+      if (e.target.value && idx < arr.length - 1) arr[idx + 1].focus();
+    });
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !e.target.value && idx > 0) arr[idx - 1].focus();
+      if (e.key === 'Enter') verifyOTP();
+    });
+    inp.addEventListener('paste', e => {
+      e.preventDefault();
+      const data = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+      arr.forEach((x, i) => { x.value = data[i] || ''; });
+      if (data.length === 6) arr[5].focus();
+    });
+  });
+  document.getElementById('phoneInput').addEventListener('input', e => {
+    e.target.value = e.target.value.replace(/\D/g, '');
+  });
+  document.getElementById('phoneInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendOTP();
+  });
+}
+
+function updateClock() {
+  const now = new Date();
+  const ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+  const hh = String(ist.getHours()).padStart(2, '0');
+  const mm = String(ist.getMinutes()).padStart(2, '0');
+  const ss = String(ist.getSeconds()).padStart(2, '0');
+  const clockEl = document.getElementById('clock');
+  if (clockEl) clockEl.textContent = `${hh}:${mm}:${ss} IST`;
+  const day = ist.getDay();
+  const minutes = ist.getHours() * 60 + ist.getMinutes();
+  const isOpen = day >= 1 && day <= 5 && minutes >= 555 && minutes <= 930;
+  const pill = document.getElementById('marketPill');
+  const stateEl = document.getElementById('marketState');
+  if (pill && stateEl) {
+    if (isOpen) { pill.classList.remove('closed'); stateEl.textContent = 'NSE LIVE'; }
+    else { pill.classList.add('closed'); stateEl.textContent = 'NSE CLOSED'; }
+  }
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+// ---- BOOT ----
+function bootDeepLink() {
+  const params = new URLSearchParams(location.search);
+  const sid = params.get('scanner');
+  if (sid) setTimeout(() => openScannerDetail(sid), 400);
+}
+
+(async function boot() {
+  bindFilters();
+  bindOTPInputs();
+  setInterval(updateClock, 1000);
+  updateClock();
+  // Inject flash style.
+  const css = document.createElement('style');
+  css.textContent = `
+    .scanner-card.flash { box-shadow: 0 0 0 2px var(--purple), 0 16px 40px -12px rgba(168,85,247,0.6); transition: box-shadow 0.3s ease; }
+    .badge.badge-pro { background: linear-gradient(135deg, var(--gold), #f59e0b); color: #1a0f00; }
+    .badge.badge-free { background: var(--bg-2); color: var(--text-2); }
+    .badge.badge-live { background: rgba(16,217,126,0.12); color: var(--bull); display: inline-flex; align-items:center; gap: 5px; }
+    .badge.badge-live .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--bull); }
+    .card-head { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 10px; align-items: flex-start;}
+    .card-name { font-family:'Fraunces', serif; font-size: 16px; font-weight: 500; line-height: 1.3; color: var(--text-0); flex: 1;}
+    .badge-row { display: flex; gap: 6px; flex-shrink: 0; }
+    .badge { font-family:'JetBrains Mono', monospace; font-size: 9px; padding: 3px 7px; border-radius: 4px; letter-spacing: 0.08em; font-weight: 600; }
+    .card-cat { font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--text-3); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px; }
+    .card-cat .bias.bull { color: var(--bull); }
+    .card-cat .bias.bear { color: var(--bear); }
+    .card-desc { font-size: 12px; color: var(--text-2); line-height: 1.5; margin-bottom: 14px; min-height: 36px; }
+    .match-count { display: flex; align-items: baseline; gap: 8px; padding: 10px 0; border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); margin-bottom: 12px; }
+    .match-count .num { font-family:'Fraunces', serif; font-size: 22px; color: var(--purple-glow); }
+    .match-count .lbl { font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--text-3); letter-spacing: 0.12em; text-transform: uppercase; }
+    .ticker-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .ticker-row { display: flex; justify-content: space-between; font-family:'JetBrains Mono', monospace; font-size: 11px; }
+    .ticker-row .sym { color: var(--text-1); }
+    .ticker-row .pct.up { color: var(--bull); }
+    .ticker-row .pct.dn { color: var(--bear); }
+    .card-foot { display: flex; justify-content: space-between; align-items: center; font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--text-3); padding-top: 4px; }
+    .card-foot .view-all { color: var(--purple-glow); }
+    .results-table { width: 100%; border-collapse: collapse; }
+    .results-table th { text-align: left; font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--text-3); letter-spacing: 0.12em; text-transform: uppercase; padding: 14px 28px; border-bottom: 1px solid var(--line-soft); }
+    .results-table td { padding: 12px 28px; border-bottom: 1px solid var(--line-soft); font-size: 13px; }
+    .results-table th.r, .results-table td.r { text-align: right; }
+    .results-table td.sym { font-family:'JetBrains Mono', monospace; color: var(--text-0); font-weight: 500; }
+    .results-table td.up { color: var(--bull); }
+    .results-table td.dn { color: var(--bear); }
+    .tv-link { color: var(--purple-glow); text-decoration: none; font-family:'JetBrains Mono', monospace; }
+    .tv-link:hover { text-decoration: underline; }
+    .modal-head { display: flex; justify-content: space-between; align-items: flex-start; padding: 24px 28px 18px; border-bottom: 1px solid var(--line-soft); gap: 16px; }
+    .modal-title { font-family:'Fraunces', serif; font-size: 22px; color: var(--text-0); margin-bottom: 8px; }
+    .modal-meta { display: flex; gap: 12px; font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--text-2); flex-wrap: wrap; }
+    .close-btn { background: var(--bg-1); border: 1px solid var(--line); color: var(--text-1); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 18px; line-height: 1; }
+    .close-btn:hover { border-color: var(--purple); color: var(--text-0); }
+    #demoFreeBtn, #demoProBtn { padding: 8px 14px; background: var(--bg-2); border: 1px solid var(--line); color: var(--text-2); border-radius: 8px; cursor: pointer; font-size: 12px; font-family: 'Geist',sans-serif; }
+    #demoFreeBtn.active, #demoProBtn.active { background: rgba(168,85,247,0.12); border-color: var(--purple-dim); color: var(--purple-glow); }
+    .demo-toggle { display: flex; gap: 8px; }
+    .v.pro { color: var(--gold); }
+    .v.free { color: var(--text-2); }
+  `;
+  document.head.appendChild(css);
+  if (state.token) {
+    try {
+      await loadScanners();
+      await refreshMe();
+      if (state.user) {
+        document.getElementById('loginView').classList.add('hidden');
+        document.getElementById('appView').classList.remove('hidden');
+        showView('dashboard');
+        renderUserChip();
+        startSSE();
+        bootDeepLink();
+      }
+    } catch (err) {
+      logout();
+    }
+  }
+})();
+    </script>
+  </body>
+</html>
